@@ -10,7 +10,7 @@ if not os.path.exists(nltk_data_dir):
     os.makedirs(nltk_data_dir)
 nltk.data.path.append(nltk_data_dir)
 
-# Download NLTK data locally (run this locally once, not on Streamlit Cloud)
+# Download NLTK data locally (run locally once, not on Streamlit Cloud)
 try:
     nltk.download('punkt', download_dir=nltk_data_dir)
     nltk.download('punkt_tab', download_dir=nltk_data_dir)
@@ -19,8 +19,8 @@ except Exception as e:
 
 print(nltk.data.path)
 
-# Initialize the summarization pipeline
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+# Initialize the summarization pipeline with a lighter model
+summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6", device=-1)  # -1 forces CPU
 
 def extract_text_from_pdf(pdf_file):
     try:
@@ -43,7 +43,7 @@ def summarize_text(text, max_length=150, min_length=50):
             return "No valid sentences to summarize."
 
         # Create chunks of text within the model's input limit
-        chunk_size = 1000  # Max input length for BART
+        chunk_size = 500  # Reduced for lighter model
         chunks = []
         current_chunk = []
         current_length = 0
